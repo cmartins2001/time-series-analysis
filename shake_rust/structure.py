@@ -15,14 +15,12 @@ class TimeSeriesDataLoader:
     def __init__(self, name):
         self.path = os.path.join(repo_dir, name)
         self.data = pd.read_csv(self.path)
-
-        if 'date' in self.data.columns:
+        self.cols = self.data.columns
+        if 'date' in self.cols:
             self.date_col = self.data['date']
         else:
             self.date_col = None
 
-    # def load_csv(self):
-    #     return pd.read_csv(self.path)
     
     def set_date_col(self):
         if self.date_col.dtype != None:
@@ -40,7 +38,7 @@ class TimeSeriesDataLoader:
         else:
 
             # Cycle through columns and look for datetime columns:
-            for col in self.data.columns:
+            for col in self.cols:
 
                 # Extract date range if a datetime column is detected:
                 if self.data[col].dtype == "datetime64[ns]":
