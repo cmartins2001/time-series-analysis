@@ -17,6 +17,9 @@ class TimeSeriesDataLoader:
         self.path = os.path.join(repo_dir, name)
         self.data = pd.read_csv(self.path)
         self.cols = self.data.columns
+        self.col_types = self.data.dtypes
+        # Initialize target column:
+        self.target_col = None
         if 'date' in self.cols:
             self.date_col = self.data['date']
         else:
@@ -73,6 +76,41 @@ class TimeSeriesDataLoader:
                 
                 else:
                     print(f"{col} datatype: {self.data[col].dtype}")
+        
+    
+    def slice_df(self):
+        
+        # NOTE: this is where I left off
+
+        # Need to slice to include only date column and target column:
+        return (self.data[[self.date_col]])
+
+
+
+### START OF USER-PROGRAM DIALOGUE CODE ###
+
+# Useful dialogue functions:
+
+
+# Dialogue:
+test_class = TimeSeriesDataLoader("daily_log_data.csv")
+
+# Print column names and dtypes:
+print(f"\nColumn names available for forecast selection: {test_class.col_types}")
+
+# Prompt user for target variable with error handling:
+loop1 = True
+while loop1:
+    col = input(f"\nEnter target variable for time series forecasting: ")
+
+    if col in test_class.cols:
+
+        if col != "date":
+
+            # CALL A METHOD THAT SLICES THE DATAFRAME
+            pass
+
+
 
 
 # Test the class below:
