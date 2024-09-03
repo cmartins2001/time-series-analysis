@@ -78,13 +78,10 @@ class TimeSeriesDataLoader:
                     print(f"{col} datatype: {self.data[col].dtype}")
         
     
-    def slice_df(self):
-        
-        # NOTE: this is where I left off
+    def slice_df(self, target_col):
 
         # Need to slice to include only date column and target column:
-        return (self.data[[self.date_col]])
-
+        return (self.data[['date', f'{target_col}']])
 
 
 ### START OF USER-PROGRAM DIALOGUE CODE ###
@@ -92,11 +89,17 @@ class TimeSeriesDataLoader:
 # Useful dialogue functions:
 
 
-# Dialogue:
-test_class = TimeSeriesDataLoader("daily_log_data.csv")
+# Creating the class instance:
+data_path = str(input("\nPaste the file path of the data to be forecasted, including the '.csv' file extension:\n"))
+
+test_class = TimeSeriesDataLoader(data_path)
+raw_df = test_class.data
+
+# Run date column check:
+user_select = int(input("Does this file contain a datetime column named 'date'? Answer 0 for no, 1 for yes, and 2 for not sure: "))
 
 # Print column names and dtypes:
-print(f"\nColumn names available for forecast selection: {test_class.col_types}")
+print(f"\nColumn names available for forecast selection:\n {test_class.col_types}")
 
 # Prompt user for target variable with error handling:
 loop1 = True
@@ -107,17 +110,26 @@ while loop1:
 
         if col != "date":
 
-            # CALL A METHOD THAT SLICES THE DATAFRAME
-            pass
+            # Call the DF slicing method:
+            sliced_df = test_class.slice_df(target_col=col)
 
+            # Show output:
+            print(f"\nSliced Dataframe, first 5 rows:\n{sliced_df.head()}")
+
+            # End loop:
+            loop1 = False
+
+    else:
+        # Re-prompt for target variable:
+        col = input(f'\n{col} is not recognized as a column available for selection, please try again: ')
 
 
 
 # Test the class below:
 
 # Create an instance with the misnamed date column:
-misnamed_date = TimeSeriesDataLoader("wrong_date_col.csv")
+# misnamed_date = TimeSeriesDataLoader("wrong_date_col.csv")
 # print(misnamed_date.cols)
-misnamed_date.set_date_col()
-print()
-print(misnamed_date.data)
+# misnamed_date.set_date_col()
+# print()
+# print(misnamed_date.data)
