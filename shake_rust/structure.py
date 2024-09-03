@@ -154,17 +154,17 @@ while loop2:
             # End loop:
             loop2 = False
 
-    else:
-        # Re-prompt for target variable:
-        col = input(f'\n{col} is not recognized as a column available for selection, please try again: ')
+    # else:
+    #     # Re-prompt for target variable:
+    #     col = input(f'\n{col} is not recognized as a column available for selection, please try again: ')
 
 # Prompt user about seeing the distribution of the target variable:
 loop3 = True
 while loop3:
-    user_bool = int(input(f"\nEnter 1 to see the distribution of the {col} colmumn OR enter 0 to SKIP: "))
-    if user_bool == 1:
+    user_bool = input(f"\nEnter 1 to see the distribution of the {col} colmumn OR enter 0 to SKIP: ")
+    if user_bool == str(1):
         test_class.target_col_histogram()
         loop3 = False
-    elif user_bool == 0:
+    elif user_bool == str(0):
         loop3 = False
 
