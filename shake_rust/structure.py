@@ -168,3 +168,4 @@ while loop3:
     elif user_bool == str(0):
         loop3 = False
 
+# NOTE: left off here, prompt user about scaling the data, then transforming, then handling missing data
