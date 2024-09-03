@@ -3,8 +3,13 @@ OOP Assignment before starting work
 Late August 2024
 '''
 
+# Import modules:
 import pandas as pd
 import os
+import matplotlib.pyplot as plt
+import seaborn as sns
+# Set graphic style:
+plt.style.use('fivethirtyeight')
 
 # Global variables:
 repo_dir = os.path.dirname(os.path.abspath(__file__))  # Directory of the script
@@ -18,7 +23,8 @@ class TimeSeriesDataLoader:
         self.data = pd.read_csv(self.path)
         self.cols = self.data.columns
         self.col_types = self.data.dtypes
-        # Initialize target column:
+        # Initialize target column name and the column itself:
+        self.target_col_nm = None
         self.target_col = None
         if 'date' in self.cols:
             self.date_col = self.data['date']
@@ -60,7 +66,7 @@ class TimeSeriesDataLoader:
                 elif self.data[col].dtype == "object":
 
                     # Print first value of column and prompt user:
-                    user_answer = int(input(f"\nDoes {self.data[col][0]} look like a datetime? Answer 1 for yes, 0 for no: "))
+                    user_answer = int(input(f"\nDoes {self.data[col][0]} look like a datetime? Answer 1 for YES, 0 for NO: "))
 
                     if user_answer == 1:
 
@@ -80,8 +86,24 @@ class TimeSeriesDataLoader:
     
     def slice_df(self, target_col):
 
+        # Set the target column name:
+        self.target_col_nm = target_col
+        
+        # Set the target column to the user input:
+        self.target_col = self.data[target_col]
+
         # Need to slice to include only date column and target column:
         return (self.data[['date', f'{target_col}']])
+    
+
+    def target_col_histogram(self):
+
+        # Plot a histogram of the target column:
+        plt.figure(figsize=(6, 7))
+        sns.histplot(data=self.data, x=self.target_col_nm, kde=True, color='darkviolet')
+        plt.title(f'{self.target_col_nm} - Histogram')
+        plt.xlabel(self.target_col_nm)
+        plt.show()
 
 
 ### START OF USER-PROGRAM DIALOGUE CODE ###
@@ -96,14 +118,27 @@ test_class = TimeSeriesDataLoader(data_path)
 raw_df = test_class.data
 
 # Run date column check:
-user_select = int(input("Does this file contain a datetime column named 'date'? Answer 0 for no, 1 for yes, and 2 for not sure: "))
+user_select = int(input("Does this file contain a datetime column named 'date'? Answer 0 for NO, 1 for YES, and 2 for NOT SURE: "))
+
+# Answer logic:
+loop1 = True
+while loop1:
+    if user_select in [0, 2]:
+        test_class.set_date_col()
+        loop1 = False
+    elif user_select == 1:
+        test_class = test_class
+        loop1 = False
+    else:
+        user_select = int(input("Does this file contain a datetime column named 'date'? Answer 0 for NO, 1 for YES, and 2 for NOT SURE: "))
+
 
 # Print column names and dtypes:
 print(f"\nColumn names available for forecast selection:\n {test_class.col_types}")
 
 # Prompt user for target variable with error handling:
-loop1 = True
-while loop1:
+loop2 = True
+while loop2:
     col = input(f"\nEnter target variable for time series forecasting: ")
 
     if col in test_class.cols:
@@ -117,19 +152,16 @@ while loop1:
             print(f"\nSliced Dataframe, first 5 rows:\n{sliced_df.head()}")
 
             # End loop:
-            loop1 = False
+            loop2 = False
 
     else:
         # Re-prompt for target variable:
         col = input(f'\n{col} is not recognized as a column available for selection, please try again: ')
 
+# Prompt user about seeing the distribution of the target variable:
+user_bool = int(input(f"\nEnter 1 to see the distribution of the {col} colmumn OR enter 0 to SKIP: "))
 
+# Answer logic:
+if user_bool == 1:
+    test_class.target_col_histogram()
 
-# Test the class below:
-
-# Create an instance with the misnamed date column:
-# misnamed_date = TimeSeriesDataLoader("wrong_date_col.csv")
-# print(misnamed_date.cols)
-# misnamed_date.set_date_col()
-# print()
-# print(misnamed_date.data)
