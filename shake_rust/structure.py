@@ -116,9 +116,7 @@ class TimeSeriesDataLoader:
         target_index = ts_df.columns.get_loc(self.target_col_nm)
 
         # Set the column to be standardized:
-        # df_to_be_scaled = ts_df.iloc[target_index].values
         df_to_be_scaled = ts_df.iloc[:, target_index].values.reshape(-1, 1)
-        # col_to_be_scaled = self.target_col
 
         # Fit and transform the target column:
         scaled_data = scaler.fit_transform(df_to_be_scaled)
@@ -201,3 +199,5 @@ while loop4:
         loop4 = False
     elif user_bool == str(0):
         loop4 = False
+
+# NOTE: I left off at adding a method to log-transform the target if needed. Also need to add at least one more transformation method: either (1) box-cox transformation or (2) differencing
