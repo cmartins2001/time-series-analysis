@@ -8,6 +8,7 @@ import pandas as pd
 import os
 import matplotlib.pyplot as plt
 import seaborn as sns
+from sklearn.preprocessing import StandardScaler
 # Set graphic style:
 plt.style.use('fivethirtyeight')
 
@@ -106,6 +107,28 @@ class TimeSeriesDataLoader:
         plt.show()
 
 
+    def normalize_target(self, ts_df):
+        
+        # Initialize StandardScaler from sklearn:
+        scaler = StandardScaler()
+
+        # Extract target column index by name:
+        target_index = ts_df.columns.get_loc(self.target_col_nm)
+
+        # Set the column to be standardized:
+        # df_to_be_scaled = ts_df.iloc[target_index].values
+        df_to_be_scaled = ts_df.iloc[:, target_index].values.reshape(-1, 1)
+        # col_to_be_scaled = self.target_col
+
+        # Fit and transform the target column:
+        scaled_data = scaler.fit_transform(df_to_be_scaled)
+
+        # Create a 1-column dataframe for merging:
+        scaled_df = pd.DataFrame(scaled_data, columns=[f"{self.target_col_nm}_norm"])
+
+        # Return the final dataframe with all three columns:
+        return (pd.concat([ts_df, scaled_df], axis=1))
+
 ### START OF USER-PROGRAM DIALOGUE CODE ###
 
 # Useful dialogue functions:
@@ -168,4 +191,13 @@ while loop3:
     elif user_bool == str(0):
         loop3 = False
 
-# NOTE: left off here, prompt user about scaling the data, then transforming, then handling missing data
+# Prompt user about normalizing the target variable:
+loop4 = True
+while loop4:
+    user_bool = input(f"\nEnter 1 to NORMALIZE the {col} colmumn OR enter 0 to SKIP: ")
+    if user_bool == str(1):
+        new_df = test_class.normalize_target(sliced_df)
+        print(f"\nNew Dataframe with Normalized Target Variable:\n{new_df}")
+        loop4 = False
+    elif user_bool == str(0):
+        loop4 = False
